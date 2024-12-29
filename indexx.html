@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Book Library</title>
+    <style>
+    
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 1em 0;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        nav {
+            margin-top: 1em;
+        }
+
+        nav input {
+            padding: 0.5em;
+            font-size: 1rem;
+            border: none;
+            border-radius: 4px;
+            width: 80%;
+            max-width: 400px;
+        }
+
+        main {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            padding: 1em;
+        }
+
+        section {
+            background-color: white;
+            margin: 1em;
+            padding: 1em;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            flex: 1 1 300px;
+            max-width: 400px;
+        }
+
+        section h2 {
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 0.5em;
+            margin-bottom: 1em;
+        }
+
+        #categories ul, #history ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #categories li, #history li {
+            padding: 0.5em 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        #books {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1em;
+        }
+
+        #books .book {
+            background-color: #fff;
+            padding: 1em;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            flex: 1 1 150px;
+            text-align: center;
+        }
+
+        #books .book h3 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        #books .book p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        footer {
+            background-color:greenyellow;
+            color: white;
+            text-align: center;
+            padding: 1em 0;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+            margin-top: 2em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Book Library</h1>
+        <nav>
+            <input type="text" id="search" placeholder="Search books...">
+        </nav>
+    </header>
+
+    <main>
+        <section id="categories">
+            <h2>Categories</h2>
+            <ul id="category-list">
+               
+            </ul>
+        </section>
+
+        <section id="book-list">
+            <h2>Books</h2>
+            <div id="books">
+                <!-- Books will be dynamically added here -->
+            </div>
+        </section>
+
+        <section id="history">
+            <h2>Borrowing History</h2>
+            <ul id="history-list">
+                <!-- Borrowing history will be dynamically added here -->
+            </ul>
+        </section>
+    </main>
+
+   
+
+    <script>
+        // Sample data for demonstration
+        const books = [
+            { id: 1, title: "The Great Gatsby", category: "Fiction", borrowed: false },
+            { id: 2, title: "Sapiens", category: "Non-Fiction", borrowed: true },
+            { id: 3, title: "1984", category: "Fiction", borrowed: false },
+            { id: 4, title: "Educated", category: "Memoir", borrowed: true },
+        ];
+
+        const categories = ["Fiction", "Non-Fiction", "Memoir"];
+        const history = [
+            { bookTitle: "Sapiens", date: "2024-12-01" },
+            { bookTitle: "Educated", date: "2024-11-15" },
+        ];
+
+        // DOM elements
+        const categoryList = document.getElementById("category-list");
+        const bookContainer = document.getElementById("books");
+        const historyList = document.getElementById("history-list");
+        const searchInput = document.getElementById("search");
+
+        // Initialize categories
+        function loadCategories() {
+            categories.forEach(category => {
+                const li = document.createElement("li");
+                li.textContent = category;
+                li.addEventListener("click", () => filterBooksByCategory(category));
+                categoryList.appendChild(li);
+            });
+        }
+
+        // Initialize books
+        function loadBooks(filter = "") {
+            bookContainer.innerHTML = "";
+            books
+                .filter(book => book.title.toLowerCase().includes(filter.toLowerCase()))
+                .forEach(book => {
+                    const div = document.createElement("div");
+                    div.className = "book";
+                    div.innerHTML = `
+                        <h3>${book.title}</h3>
+                        <p>Category: ${book.category}</p>
+                        <p>${book.borrowed ? "Borrowed" : "Available"}</p>
+                    `;
+                    bookContainer.appendChild(div);
+                });
+        }
+
+        // Initialize borrowing history
+        function loadHistory() {
+            history.forEach(entry => {
+                const li = document.createElement("li");
+                li.textContent = `${entry.bookTitle} - Borrowed on ${entry.date}`;
+                historyList.appendChild(li);
+            });
+        }
+
+        // Filter books by category
+        function filterBooksByCategory(category) {
+            loadBooks();
+            const filteredBooks = books.filter(book => book.category === category);
+            bookContainer.innerHTML = "";
+            filteredBooks.forEach(book => {
+                const div = document.createElement("div");
+                div.className = "book";
+                div.innerHTML = `
+                    <h3>${book.title}</h3>
+                    <p>Category: ${book.category}</p>
+                    <p>${book.borrowed ? "Borrowed" : "Available"}</p>
+                `;
+                bookContainer.appendChild(div);
+            });
+        }
+
+        // Search functionality
+        searchInput.addEventListener("input", (e) => {
+            const searchTerm = e.target.value;
+            loadBooks(searchTerm);
+        });
+
+        // Initialize app
+        loadCategories();
+        loadBooks();
+        loadHistory();
+    </script>
+</body>
+</html>
+
